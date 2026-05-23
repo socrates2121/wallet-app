@@ -6,9 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
-  },  
+  },
   "dependencies": {
-    "next": "15.3.2",
+    "next": "15.3.8",
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^2.12.7"
