@@ -227,7 +227,9 @@ export default function FinanceApp() {
   const clearTxs = ()   => { setTxs([]); localStorage.removeItem("fin_v6"); };
 
   const genInsights = async () => {
-    setAiLoading(true); setView("insights");
+    setInsights([]);
+    setAiLoading(true); 
+    setView("insights");
     try {
       const payload = { month, totalInc, totalExp, totalTips, balance:totalInc-totalExp, savRate:`${savRate}%`,
         dailyFromTips:Math.round(dailyFromTips), daysLeft,
@@ -237,7 +239,10 @@ export default function FinanceApp() {
         body:JSON.stringify({ payload, month })
       });
       const data = await res.json();
-      setInsights(data.insights || []);
+      const result = Array.isArray(data.insights) && data.insights.length > 0
+        ? data.insights
+        : [{type:"warning",title:"Κενή απάντηση",message:"Η AI δεν επέστρεψε insights. Δοκίμασε ξανά.",icon:"⚠️"}];
+      setInsights(result);
     } catch { setInsights([{type:"warning",title:"Σφάλμα",message:"Δοκίμασε ξανά.",icon:"⚠️"}]); }
     setAiLoading(false);
   };
