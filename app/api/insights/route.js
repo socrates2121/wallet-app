@@ -12,7 +12,7 @@ export async function POST(request) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5-20251101",
+        model: "claude-sonnet-4-5",
         max_tokens: 1000,
         messages: [
           {
@@ -29,6 +29,7 @@ export async function POST(request) {
     });
 
     const data = await res.json();
+    console.log("API response:", JSON.stringify(data));
     const txt = data.content?.[0]?.text || "[]";
     const insights = JSON.parse(txt.replace(/```json|```/g, "").trim());
 
