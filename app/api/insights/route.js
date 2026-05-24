@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
-    const { payload, month } = await request.json();
-
+    const { payload, month, island, job } = await request.json();
+    
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -18,7 +18,7 @@ export async function POST(request) {
           {
             role: "user",
             content:
-              `Είσαι φιλικός οικονομικός σύμβουλος. Ο χρήστης εργάζεται bartender στη Σέριφο, παρακολουθεί μισθό + tips.\n` +
+              `Είσαι φιλικός οικονομικός σύμβουλος. Ο χρήστης εργάζεται ${job||"bartender"} στη ${island||"Σέριφο"}, παρακολουθεί μισθό + tips.\n` +
               `Ανάλυσε τα δεδομένα για ${month}:\n${JSON.stringify(payload, null, 2)}\n\n` +
               `4-5 insights στα ελληνικά, 1-2 προτάσεις το καθένα. Φιλικός τόνος, συγκεκριμένα ποσά €.\n` +
               `Απάντησε ΜΟΝΟ valid JSON (χωρίς markdown):\n` +
