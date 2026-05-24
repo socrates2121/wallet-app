@@ -14,7 +14,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata = {
-  title: "Wallet · Σέριφος",
+  title: "Financial Tracker",
   description: "Personal finance tracker",
   manifest: "/manifest.json",
   themeColor: "#0b1123",
