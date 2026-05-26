@@ -275,24 +275,22 @@ export default function FinanceApp() {
   const delTx    = (id) => setTxs(prev=>prev.filter(t=>t.id!==id));
   const clearTxs = ()   => { setTxs([]); localStorage.removeItem("fin_v6"); };
 
-  const genInsights = async () => {
-    setInsights([]); setAiLoading(true); setView("insights");
-    try {
-      const payload = { month, totalInc, totalExp, totalTips, balance:totalInc-totalExp, savRate:`${savRate}%`,
-        dailyFromTips:Math.round(dailyFromTips), daysLeft,
-        cats:catData.map(c=>({cat:c.name,amt:c.value,pct:totalExp>0?`${Math.round((c.value/totalExp)*100)}%`:"0%"})) };
-      const res = await fetch("/api/insights",{
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({ payload, month, island: settings.island, job: settings.job })
-      });
-      const data = await res.json();
-      const result = Array.isArray(data.insights) && data.insights.length > 0
-        ? data.insights
-        : [{type:"warning",title:"Κενή απάντηση",message:"Δοκίμασε ξανά.",icon:"⚠️"}];
-      setInsights(result);
-    } catch { setInsights([{type:"warning",title:"Σφάλμα",message:"Δοκίμασε ξανά.",icon:"⚠️"}]); }
-    setAiLoading(false);
-  };
+  const payload = {
+  month,
+  μισθός: totalSalary,
+  tips: totalTips,
+  έκτακτα: totalExtra > 0 ? totalExtra : undefined,
+  έξοδα: totalExp,
+  tips_μείον_έξοδα: totalTips - totalExp,
+  μισθός_που_χρησιμοποιήθηκε: salaryUsed,
+  ημερήσιο_budget_από_tips: Math.round(dailyFromTips),
+  μέρες_που_μένουν: daysLeft,
+  κατανομή_εξόδων: catData.map(c=>({
+    κατηγορία: c.name,
+    ποσό: c.value,
+    ποσοστό: totalExp>0?`${Math.round((c.value/totalExp)*100)}%`:"0%"
+  }))
+};
 
   if (!ready) return (
     <div style={{background:T.bg,minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",transition:"background .4s"}}>
