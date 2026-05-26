@@ -240,6 +240,7 @@ export default function FinanceApp() {
   const tipBalance    = totalTips - totalExp;
   const dailyFromTips = tipBalance / daysLeft;
   const totalSalary   = useMemo(() => monthTxs.filter(t=>t.category==="salary").reduce((s,t)=>s+t.amount,0), [monthTxs]);
+  const totalExtra    = useMemo(() => monthTxs.filter(t=>t.type==="income" && t.category!=="salary" && t.category!=="tips").reduce((s,t)=>s+t.amount,0), [monthTxs]);
   const salaryUsed    = tipBalance < 0 ? Math.min(Math.abs(tipBalance), totalSalary) : 0;
 
   const catData = useMemo(() => {
@@ -304,7 +305,7 @@ export default function FinanceApp() {
       <style>{makeCSS(isDark)}</style>
       <div style={{paddingBottom:"88px",overflowY:"auto",minHeight:"100vh"}}>
         <AppHeader view={view} setView={setView} month={month} setMonth={setMonth} allMonths={allMonths} settings={settings} T={T}/>
-        {view==="dashboard"    && <Dashboard T={T} balance={balance} totalInc={totalInc} totalExp={totalExp} totalTips={totalTips} totalSalary={totalSalary} salaryUsed={salaryUsed} savRate={savRate} dailyFromTips={dailyFromTips} daysLeft={daysLeft} catData={catData} barData={barData} recentTxs={monthTxs.slice(0,6)} month={month} onViewAll={()=>setView("transactions")} onInsights={genInsights}/>}
+        {view==="dashboard"    && <Dashboard T={T} balance={balance} totalInc={totalInc} totalExp={totalExp} totalTips={totalTips} totalSalary={totalSalary} totalExtra={totalExtra} salaryUsed={salaryUsed} savRate={savRate} dailyFromTips={dailyFromTips} daysLeft={daysLeft} catData={catData} barData={barData} recentTxs={monthTxs.slice(0,6)} month={month} onViewAll={()=>setView("transactions")} onInsights={genInsights}/>}
         {view==="transactions" && <Transactions T={T} txs={monthTxs} onDelete={delTx} month={month} setMonth={setMonth} allMonths={allMonths}/>}
         {view==="insights"     && <InsightsView T={T} insights={insights} loading={aiLoading} onRegen={genInsights} month={month}/>}
         {view==="settings"     && <SettingsView T={T} settings={settings} onUpdate={updateSettings} onClear={clearTxs} isDark={isDark}/>}
@@ -365,7 +366,7 @@ function AppHeader({view,setView,month,setMonth,allMonths,settings,T}) {
 
 // ─── DASHBOARD ────────────────────────────────────────────────────────────────
 
-function Dashboard({T,balance,totalInc,totalExp,totalTips,totalSalary,salaryUsed,savRate,dailyFromTips,daysLeft,catData,barData,recentTxs,month,onViewAll,onInsights}) {
+function Dashboard({T,balance,totalInc,totalExp,totalTips,totalSalary,totalExtra,salaryUsed,savRate,dailyFromTips,daysLeft,catData,barData,recentTxs,month,onViewAll,onInsights}) {
   const pct = Math.max(0,Math.min(100,savRate));
   const isPos = dailyFromTips >= 0;
 
@@ -378,15 +379,16 @@ function Dashboard({T,balance,totalInc,totalExp,totalTips,totalSalary,salaryUsed
         <div style={{fontSize:"52px",fontWeight:700,fontFamily:"'Cormorant Garamond',serif",letterSpacing:"-1px",color:T.t1,lineHeight:1,marginBottom:"6px"}}>{fmt(balance)}</div>
         <div style={{fontSize:"12px",color:T.t3,marginBottom:"26px"}}>{mLabel(month)}</div>
 
-        <div style={{display:"flex",paddingTop:"20px",borderTop:`1px solid ${T.borderSoft}`}}>
+        <div style={{display:"flex",flexDirection:"column",gap:"8px",paddingTop:"20px",borderTop:`1px solid ${T.borderSoft}`}}>
           {[
-            {lbl:"Έσοδα", val:`+${fmt(totalInc)}`,  clr:T.accent},
-            {lbl:"Έξοδα", val:`-${fmt(totalExp)}`,  clr:T.red},
-            {lbl:"Tips",  val:`+${fmt(totalTips)}`, clr:T.gold},
-          ].map((s,i)=>(
-            <div key={i} style={{flex:1,paddingRight:i<2?"14px":"0",marginRight:i<2?"14px":"0",borderRight:i<2?`1px solid ${T.borderSoft}`:"none"}}>
-              <div style={{fontSize:"10px",color:T.t3,marginBottom:"4px",textTransform:"uppercase",letterSpacing:".08em"}}>{s.lbl}</div>
-              <div style={{fontSize:"16px",fontWeight:600,color:s.clr,fontFamily:"'Cormorant Garamond',serif"}}>{s.val}</div>
+            {lbl:"Μισθός",  val:`+${fmt(totalSalary)}`, clr:T.accent, show: totalSalary > 0},
+            {lbl:"Tips",    val:`+${fmt(totalTips)}`,   clr:T.gold,   show: totalTips > 0},
+            {lbl:"Έκτακτα", val:`+${fmt(totalExtra)}`,  clr:T.blue,   show: totalExtra > 0},
+            {lbl:"Έξοδα",   val:`-${fmt(totalExp)}`,    clr:T.red,    show: true},
+          ].filter(s=>s.show).map((s,i,arr)=>(
+            <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",paddingBottom:i<arr.length-1?"8px":"0",borderBottom:i<arr.length-1?`1px solid ${T.borderSoft}`:"none"}}>
+              <div style={{fontSize:"11px",color:T.t3,textTransform:"uppercase",letterSpacing:".08em"}}>{s.lbl}</div>
+              <div style={{fontSize:"15px",fontWeight:600,color:s.clr,fontFamily:"'Cormorant Garamond',serif"}}>{s.val}</div>
             </div>
           ))}
         </div>
