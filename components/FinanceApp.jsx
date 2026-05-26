@@ -239,6 +239,8 @@ export default function FinanceApp() {
   const daysLeft      = daysRemaining(month);
   const tipBalance    = totalTips - totalExp;
   const dailyFromTips = tipBalance / daysLeft;
+  const totalSalary   = useMemo(() => monthTxs.filter(t=>t.category==="salary").reduce((s,t)=>s+t.amount,0), [monthTxs]);
+  const salaryUsed    = tipBalance < 0 ? Math.min(Math.abs(tipBalance), totalSalary) : 0;
 
   const catData = useMemo(() => {
     const map = {};
@@ -302,7 +304,7 @@ export default function FinanceApp() {
       <style>{makeCSS(isDark)}</style>
       <div style={{paddingBottom:"88px",overflowY:"auto",minHeight:"100vh"}}>
         <AppHeader view={view} setView={setView} month={month} setMonth={setMonth} allMonths={allMonths} settings={settings} T={T}/>
-        {view==="dashboard"    && <Dashboard T={T} balance={balance} totalInc={totalInc} totalExp={totalExp} totalTips={totalTips} savRate={savRate} dailyFromTips={dailyFromTips} daysLeft={daysLeft} catData={catData} barData={barData} recentTxs={monthTxs.slice(0,6)} month={month} onViewAll={()=>setView("transactions")} onInsights={genInsights}/>}
+        {view==="dashboard"    && <Dashboard T={T} balance={balance} totalInc={totalInc} totalExp={totalExp} totalTips={totalTips} totalSalary={totalSalary} salaryUsed={salaryUsed} savRate={savRate} dailyFromTips={dailyFromTips} daysLeft={daysLeft} catData={catData} barData={barData} recentTxs={monthTxs.slice(0,6)} month={month} onViewAll={()=>setView("transactions")} onInsights={genInsights}/>}
         {view==="transactions" && <Transactions T={T} txs={monthTxs} onDelete={delTx} month={month} setMonth={setMonth} allMonths={allMonths}/>}
         {view==="insights"     && <InsightsView T={T} insights={insights} loading={aiLoading} onRegen={genInsights} month={month}/>}
         {view==="settings"     && <SettingsView T={T} settings={settings} onUpdate={updateSettings} onClear={clearTxs} isDark={isDark}/>}
@@ -363,7 +365,7 @@ function AppHeader({view,setView,month,setMonth,allMonths,settings,T}) {
 
 // ─── DASHBOARD ────────────────────────────────────────────────────────────────
 
-function Dashboard({T,balance,totalInc,totalExp,totalTips,savRate,dailyFromTips,daysLeft,catData,barData,recentTxs,month,onViewAll,onInsights}) {
+function Dashboard({T,balance,totalInc,totalExp,totalTips,totalSalary,salaryUsed,savRate,dailyFromTips,daysLeft,catData,barData,recentTxs,month,onViewAll,onInsights}) {
   const pct = Math.max(0,Math.min(100,savRate));
   const isPos = dailyFromTips >= 0;
 
@@ -437,6 +439,22 @@ function Dashboard({T,balance,totalInc,totalExp,totalTips,savRate,dailyFromTips,
             <div style={{position:"absolute",left:0,top:0,height:"100%",borderRadius:"2px",background:T.red,opacity:.35,width:`${Math.min(100,(totalExp/Math.max(totalTips,totalExp,1))*100)}%`,transition:"width 1.2s cubic-bezier(.16,1,.3,1)"}}/>
           </div>
         </div>
+
+        {/* Salary status */}
+        {totalSalary > 0 && (
+          <div style={{marginTop:"14px",paddingTop:"14px",borderTop:`1px solid ${T.borderSoft}`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <span style={{fontSize:"16px"}}>{salaryUsed===0?"💰":"⚠️"}</span>
+              <div>
+                <div style={{fontSize:"10px",color:T.t3,marginBottom:"2px",textTransform:"uppercase",letterSpacing:".06em"}}>Μισθός μήνα</div>
+                <div style={{fontSize:"13px",fontWeight:600,color:salaryUsed===0?T.accent:T.red}}>
+                  {salaryUsed===0 ? "Ανέπαφος ✅" : `Χρησιμοποιήθηκαν ${fmt(salaryUsed)}`}
+                </div>
+              </div>
+            </div>
+            <div style={{fontSize:"17px",fontWeight:700,fontFamily:"'Cormorant Garamond',serif",color:T.t1}}>{fmt(totalSalary)}</div>
+          </div>
+        )}
       </div>
 
       {/* Category Donut */}
@@ -841,7 +859,3 @@ function Empty({msg,icon="📭",T}){
     </div>
   );
 }
-
-
-
-
