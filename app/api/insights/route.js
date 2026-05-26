@@ -25,7 +25,7 @@ export async function POST(request) {
 `Ανάλυσε τα δεδομένα για ${month}:\n${JSON.stringify(payload, null, 2)}\n\n` +
 `Δώσε 4-5 insights στα ελληνικά με γνώμονα αυτή τη φιλοσοφία. ` +
 `Συμπερίλαβε 1 savings prediction με συγκεκριμένο ποσό € και 1 budget coaching με συγκεκριμένη κατηγορία. ` +
-`Φιλικός τόνος, συγκεκριμένα ποσά €, 1-2 προτάσεις το καθένα.\n` +
+`Φιλικός τόνος. Κάθε insight: ένα μόνο ξεκάθαρο μήνυμα, μέγιστο 2 προτάσεις, με συγκεκριμένα ποσά σε € χωρίς παρενθέσεις.\n` +
 `Απάντησε ΜΟΝΟ valid JSON (χωρίς markdown):\n` +
 `[{"type":"positive"|"warning"|"tip"|"insight","title":"3-4 λέξεις","message":"...","icon":"emoji"}]`,
           },
