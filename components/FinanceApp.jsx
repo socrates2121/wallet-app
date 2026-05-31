@@ -12,6 +12,8 @@ const INCOME_CATS = [
 ];
 
 const EXPENSE_CATS = [
+  { id:"rent",  label:"Ενοίκιο",      icon:"🏠" },
+  { id:"bills", label:"Λογαριασμοί",  icon:"💡" },
   { id:"supermarket", label:"Σούπερ Μάρκετ",    icon:"🛒" },
   { id:"fuel",        label:"Βενζίνη",           icon:"⛽" },
   { id:"food",        label:"Φαγητό / Delivery", icon:"🍛" },
