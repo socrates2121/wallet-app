@@ -15,17 +15,35 @@ const dmSans = DM_Sans({
 
 export const metadata = {
   title: "Seasonινστας",
-  description: "Personal finance tracker",
+  description: "Financial tracker για εποχιακούς εργαζόμενους",
   manifest: "/manifest.json",
+};
+
+export const viewport = {
   themeColor: "#0b1123",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="el">
+      <head>
+        <link rel="apple-touch-icon" href="/icon-192.png"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+        <meta name="apple-mobile-web-app-title" content="Seasonινστας"/>
+      </head>
       <body className={`${cormorant.variable} ${dmSans.variable}`}>
         {children}
+        <script dangerouslySetInnerHTML={{__html: `
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('/sw.js');
+            });
+          }
+        `}}/>
       </body>
     </html>
   );
