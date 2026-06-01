@@ -675,6 +675,16 @@ function SettingsView({T,settings,onUpdate,onClear}) {
         </div>
       </div>
       <div className="fu2" style={{background:T.card,borderRadius:"22px",padding:"22px",border:`1px solid ${T.borderSoft}`}}>
+        <STitle T={T}>Feedback</STitle>
+        <div style={{marginTop:"16px"}}>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLScQeJKHYKCLqtagkxV1I_u05ioWtPPkbrEl_PxEcbGf1K0scg/viewform?usp=dialog"
+            target="_blank" rel="noopener noreferrer"
+            style={{display:"block",width:"100%",padding:"13px",borderRadius:"14px",border:`1px solid ${T.accent}40`,background:T.accentGlow,color:T.accent,fontSize:"13px",fontWeight:600,cursor:"pointer",textAlign:"center",textDecoration:"none"}}
+          >💬 Στείλε Feedback</a>
+          <div style={{fontSize:"11px",color:T.t3,textAlign:"center",marginTop:"8px"}}>Η γνώμη σου μετράει!</div>
+        </div>
+      </div>
+      <div className="fu3" style={{background:T.card,borderRadius:"22px",padding:"22px",border:`1px solid ${T.borderSoft}`}}>
         <STitle T={T}>Δεδομένα</STitle>
         <div style={{marginTop:"16px"}}>
           {!confirmClear ? (
