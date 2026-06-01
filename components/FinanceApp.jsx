@@ -305,7 +305,7 @@ function AppHeader({view,setView,periodProps,settings,T}) {
         : <div>
             <div style={{fontSize:"11px",color:T.t3,letterSpacing:".12em",textTransform:"uppercase",marginBottom:"3px"}}>{settings.island||"Wallet"} 🏝️</div>
             <div style={{fontSize:"24px",fontWeight:700,fontFamily:"'Cormorant Garamond',serif",color:T.t1,lineHeight:1}}>
-              {settings.name?`Γεια, ${settings.name}`:"Wallet"}
+              {settings.name?`Γεια, ${settings.name}`:"Seasonινστας"}
             </div>
           </div>
       }
@@ -694,7 +694,7 @@ function SettingsView({T,settings,onUpdate,onClear}) {
         </div>
       </div>
       <div style={{textAlign:"center",padding:"8px 0 4px"}}>
-        <div style={{fontSize:"11px",color:T.t3}}>Financial Tracker · Made with ☀️</div>
+        <div style={{fontSize:"11px",color:T.t3}}>Tutto Passa</div>
       </div>
     </div>
   );
