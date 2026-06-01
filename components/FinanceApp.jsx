@@ -244,6 +244,16 @@ export default function FinanceApp() {
   const clearTxs = ()   => { setTxs([]); localStorage.removeItem("fin_v7"); };
 
   const genInsights = async () => {
+    // Check daily limit
+    const today = localDate();
+    const limitKey = `insights_limit_${today}`;
+    const usedToday = parseInt(localStorage.getItem(limitKey) || "0");
+    if (usedToday >= 3) {
+      setInsights([{type:"warning", title:"Ημερήσιο Όριο", message:"Έχεις χρησιμοποιήσει τις 3 αναλύσεις για σήμερα. Δοκίμασε αύριο! 🌙", icon:"⏳"}]);
+      setView("insights");
+      return;
+    }
+
     setInsights([]); setAiLoad(true); setView("insights");
     try {
       const payload = {
@@ -263,6 +273,8 @@ export default function FinanceApp() {
       setInsights(Array.isArray(data.insights)&&data.insights.length>0
         ? data.insights
         : [{type:"warning",title:"Κενή απάντηση",message:"Δοκίμασε ξανά.",icon:"⚠️"}]);
+      // Increment daily counter
+      localStorage.setItem(limitKey, String(usedToday + 1));
     } catch { setInsights([{type:"warning",title:"Σφάλμα",message:"Δοκίμασε ξανά.",icon:"⚠️"}]); }
     setAiLoad(false);
   };
@@ -419,16 +431,24 @@ function Dashboard({T,balance,totalExp,totalTips,totalSal,totalExtra,salUsed,isP
       </div>
 
       {/* AI CTA */}
-      <button className="fu1 hov scale" onClick={onInsights}
-        style={{width:"100%",padding:"16px 20px",background:T.card,border:`1px solid ${T.borderSoft}`,borderRadius:"20px",cursor:"pointer",display:"flex",alignItems:"center",gap:"14px",color:T.t1,textAlign:"left",boxShadow:"0 4px 24px rgba(0,0,0,.06)"}}
-      >
-        <span style={{fontSize:"22px"}}>✨</span>
-        <div style={{flex:1}}>
-          <div style={{fontSize:"15px",fontWeight:600,color:T.t1,fontFamily:"'Cormorant Garamond',serif"}}>AI Οικονομική Ανάλυση</div>
-          <div style={{fontSize:"12px",color:T.t2,marginTop:"2px"}}>Insights βασισμένα στα δεδομένα σου</div>
-        </div>
-        <span style={{color:T.accent,fontSize:"18px",opacity:.8}}>→</span>
-      </button>
+      {(() => {
+        const used = parseInt(localStorage.getItem(`insights_limit_${localDate()}`) || "0");
+        const remaining = 3 - used;
+        return (
+          <button className="fu1 hov scale" onClick={onInsights}
+            style={{width:"100%",padding:"16px 20px",background:T.card,border:`1px solid ${T.borderSoft}`,borderRadius:"20px",cursor:"pointer",display:"flex",alignItems:"center",gap:"14px",color:T.t1,textAlign:"left",boxShadow:"0 4px 24px rgba(0,0,0,.06)"}}
+          >
+            <span style={{fontSize:"22px"}}>✨</span>
+            <div style={{flex:1}}>
+              <div style={{fontSize:"15px",fontWeight:600,color:T.t1,fontFamily:"'Cormorant Garamond',serif"}}>AI Οικονομική Ανάλυση</div>
+              <div style={{fontSize:"12px",color:T.t2,marginTop:"2px"}}>
+                {remaining > 0 ? `${remaining}/3 αναλύσεις διαθέσιμες σήμερα` : "Όριο ημέρας — επιστρέφει αύριο 🌙"}
+              </div>
+            </div>
+            <span style={{color:remaining>0?T.accent:T.t3,fontSize:"18px",opacity:.8}}>→</span>
+          </button>
+        );
+      })()}
 
       {/* Cumulative Balance Chart */}
       {chartData.length > 1 && (
