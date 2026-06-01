@@ -14,7 +14,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata = {
-  title: "Financial Tracker",
+  title: "Seasonινστας",
   description: "Personal finance tracker",
   manifest: "/manifest.json",
   themeColor: "#0b1123",
