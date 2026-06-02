@@ -247,7 +247,7 @@ export default function FinanceApp() {
     // Check daily limit
     const today = localDate();
     const limitKey = `insights_limit_${today}`;
-    const usedToday = parseInt(localStorage.getItem(limitKey) || "0");
+    const usedToday = typeof window !== "undefined" ? parseInt(localStorage.getItem(limitKey) || "0") : 0;
     if (usedToday >= 3) {
       setInsights([{type:"warning", title:"Ημερήσιο Όριο", message:"Έχεις χρησιμοποιήσει τις 3 αναλύσεις για σήμερα. Δοκίμασε αύριο! 🌙", icon:"⏳"}]);
       setView("insights");
@@ -432,7 +432,7 @@ function Dashboard({T,balance,totalExp,totalTips,totalSal,totalExtra,salUsed,isP
 
       {/* AI CTA */}
       {(() => {
-        const used = parseInt(localStorage.getItem(`insights_limit_${localDate()}`) || "0");
+        const used = typeof window !== "undefined" ? parseInt(localStorage.getItem(`insights_limit_${localDate()}`) || "0") : 0;
         const remaining = 3 - used;
         return (
           <button className="fu1 hov scale" onClick={onInsights}
