@@ -295,7 +295,7 @@ export default function FinanceApp() {
         {view==="dashboard"    && <Dashboard T={T} balance={balance} totalExp={totalExp} totalTips={totalTips} totalSal={totalSal} totalExtra={totalExtra} salUsed={salUsed} isPos={isPos} tipBal={tipBal} catData={catData} chartData={chartData} recentTxs={periodTxs.slice(0,6)} periodLabel={periodLabel} onViewAll={()=>setView("transactions")} onInsights={genInsights}/>}
         {view==="transactions" && <Transactions T={T} txs={periodTxs} onDelete={delTx} periodProps={periodProps}/>}
         {view==="insights"     && <InsightsView T={T} insights={insights} loading={aiLoad} onRegen={genInsights} periodLabel={periodLabel}/>}
-        {view==="settings"     && <SettingsView T={T} settings={settings} onUpdate={updSetting} onClear={clearTxs}/>}
+        {view==="settings"     && <SettingsView T={T} settings={settings} onUpdate={updSetting} onClear={clearTxs} txs={txs}/>}
       </div>
       <BottomNav T={T} view={view} setView={setView} onAdd={()=>{setAddType("expense");setShowAdd(true);}}/>
       {showAdd && <AddModal T={T} type={addType} setType={setAddType} onAdd={addTx} onClose={()=>setShowAdd(false)}/>}
@@ -672,7 +672,7 @@ function InsightsView({T,insights,loading,onRegen,periodLabel}) {
 
 // ─── SETTINGS ────────────────────────────────────────────────────────────────
 
-function SettingsView({T,settings,onUpdate,onClear}) {
+function SettingsView({T,settings,onUpdate,onClear,txs}) {
   const [confirmClear,setConfirmClear] = useState(false);
   return (
     <div style={{padding:"0 16px",display:"flex",flexDirection:"column",gap:"14px"}}>
@@ -695,6 +695,26 @@ function SettingsView({T,settings,onUpdate,onClear}) {
         </div>
       </div>
       <div className="fu2" style={{background:T.card,borderRadius:"22px",padding:"22px",border:`1px solid ${T.borderSoft}`}}>
+        <STitle T={T}>Εξαγωγή Δεδομένων</STitle>
+        <div style={{marginTop:"16px"}}>
+          <button onClick={()=>{
+            const headers = "Ημερομηνία,Τύπος,Κατηγορία,Περιγραφή,Ποσό (€)";
+            const rows = txs.map(t =>
+              `${t.date},${t.type==="income"?"Έσοδο":"Έξοδο"},${getCat(t.category).label},"${t.description}",${t.type==="income"?t.amount:-t.amount}`
+            );
+            const csv = [headers,...rows].join("\n");
+            const blob = new Blob(["\uFEFF"+csv], {type:"text/csv;charset=utf-8;"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url; a.download = "seasoninstas_data.csv"; a.click();
+            URL.revokeObjectURL(url);
+          }}
+            style={{width:"100%",padding:"13px",borderRadius:"14px",border:`1px solid ${T.blue}40`,background:T.blueGlow,color:T.blue,fontSize:"13px",fontWeight:600,cursor:"pointer"}}
+          >⬇️ Εξαγωγή σε CSV</button>
+          <div style={{fontSize:"11px",color:T.t3,textAlign:"center",marginTop:"8px"}}>Όλες οι συναλλαγές σε αρχείο Excel</div>
+        </div>
+      </div>
+      <div className="fu2" style={{background:T.card,borderRadius:"22px",padding:"22px",border:`1px solid ${T.borderSoft}`}}>
         <STitle T={T}>Feedback</STitle>
         <div style={{marginTop:"16px"}}>
           <a href="https://docs.google.com/forms/d/e/1FAIpQLScQeJKHYKCLqtagkxV1I_u05ioWtPPkbrEl_PxEcbGf1K0scg/viewform?usp=dialog"
@@ -704,7 +724,7 @@ function SettingsView({T,settings,onUpdate,onClear}) {
           <div style={{fontSize:"11px",color:T.t3,textAlign:"center",marginTop:"8px"}}>Η γνώμη σου μετράει!</div>
         </div>
       </div>
-      <div className="fu3" style={{background:T.card,borderRadius:"22px",padding:"22px",border:`1px solid ${T.borderSoft}`}}>
+      <div className="fu2" style={{background:T.card,borderRadius:"22px",padding:"22px",border:`1px solid ${T.borderSoft}`}}>
         <STitle T={T}>Δεδομένα</STitle>
         <div style={{marginTop:"16px"}}>
           {!confirmClear ? (
