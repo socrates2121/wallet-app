@@ -1,4 +1,5 @@
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { Analytics } from '@vercel/analytics/next';
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${cormorant.variable} ${dmSans.variable}`}>
         {children}
+        <Analytics />
         <script dangerouslySetInnerHTML={{__html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
