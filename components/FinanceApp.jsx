@@ -476,7 +476,14 @@ function Dashboard({T,balance,totalExp,totalTips,totalSal,totalExtra,salUsed,isP
         </div>
       )}
 
-      {/* Category Donut */}
+      {/* Empty state */}
+      {totalExp===0 && totalTips===0 && totalSal===0 && (
+        <div className="fu1" style={{background:T.card,borderRadius:"22px",padding:"28px 22px",border:`1px solid ${T.borderSoft}`,textAlign:"center"}}>
+          <div style={{fontSize:"36px",marginBottom:"12px"}}>🏝️</div>
+          <div style={{fontSize:"18px",fontWeight:600,fontFamily:"'Cormorant Garamond',serif",color:T.t1,marginBottom:"8px"}}>Νέος μήνας!</div>
+          <div style={{fontSize:"13px",color:T.t2,lineHeight:1.7}}>Ξεκίνα καταχωρώντας τα έσοδα και έξοδά σου.</div>
+        </div>
+      )}
       {catData.length > 0 && (
         <div className="fu3 hov" style={{background:T.card,borderRadius:"22px",padding:"22px",border:`1px solid ${T.borderSoft}`,boxShadow:"0 4px 24px rgba(0,0,0,.06)"}}>
           <STitle T={T}>Κατανομή Εξόδων</STitle>
